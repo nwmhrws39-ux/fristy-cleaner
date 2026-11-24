@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 9 9 13;
+  --panel: 17 17 23;
+  --panel2: 24 24 32;
+  --line: 38 38 50;
+  --fg: 236 235 244;
+  --muted: 150 148 170;
+  --accent: 139 92 246;
+  --accent2: 192 132 252;
+  --ok: 52 211 153;
+  --warn: 251 191 36;
+  --danger: 248 113 113;
+  /* data-viz categorical slots (dark steps) */
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+  --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767;
+  --s-other: #5c5b66;
+  color-scheme: dark;
+}
+:root.light {
+  --bg: 243 242 248;
+  --panel: 255 255 255;
+  --panel2: 247 246 251;
+  --line: 224 222 234;
+  --fg: 22 20 33;
+  --muted: 104 101 124;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
+  --s-other: #b4b2bd;
+  color-scheme: light;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+}
+.selectable { user-select: text; }
+.drag { -webkit-app-region: drag; }
+.no-drag { -webkit-app-region: no-drag; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; border: 2px solid rgb(var(--bg)); }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--muted) / 0.5); }
+::-webkit-scrollbar-track { background: transparent; }
+
+.card { @apply rounded-2xl border border-line bg-panel; }
+.tabular { font-variant-numeric: tabular-nums; }
+.glow-bg {
+  background:
+    radial-gradient(1200px 500px at 0% -10%, rgb(var(--accent) / 0.14), transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, rgb(var(--accent2) / 0.08), transparent 60%);
+}
+input[type='number']::-webkit-inner-spin-button { opacity: 0.4; }
+.path-ltr { direction: ltr; unicode-bidi: plaintext; }

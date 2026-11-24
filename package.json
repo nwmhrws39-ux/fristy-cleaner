@@ -1,0 +1,116 @@
+{
+  "name": "fristy-cleaner",
+  "productName": "FRISTY Cleaner",
+  "version": "1.0.0",
+  "description": "FRISTY Cleaner - Advanced, safety-first Windows storage cleaner",
+  "author": "FRISTY",
+  "license": "MIT",
+  "private": true,
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build:renderer": "vite build",
+    "build:electron": "node scripts/build-electron.mjs",
+    "build": "npm run typecheck && npm run build:renderer && npm run build:electron",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder --win nsis --x64 --publish never",
+    "dist:dir": "npm run build && electron-builder --win dir --x64 --publish never",
+    "icons": "node scripts/make-icon.mjs",
+    "dist:zip": "npm run build && electron-builder --win zip --x64 --publish never",
+    "e2e": "npm run build && node scripts/e2e.mjs"
+  },
+  "dependencies": {
+    "sql.js": "1.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.30",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@types/sql.js": "1.4.9",
+    "@vitejs/plugin-react": "4.6.0",
+    "autoprefixer": "10.4.21",
+    "electron": "37.2.0",
+    "electron-builder": "26.0.12",
+    "esbuild": "0.25.5",
+    "framer-motion": "12.23.0",
+    "lucide-react": "0.525.0",
+    "postcss": "8.5.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "3.0.2",
+    "resedit": "^1.7.2",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.8.3",
+    "vite": "6.3.5",
+    "vitest": "3.2.4",
+    "zustand": "5.0.6"
+  },
+  "overrides": {
+    "motion-dom": "12.22.0",
+    "motion-utils": "12.19.0"
+  },
+  "build": {
+    "appId": "com.fristy.cleaner",
+    "productName": "FRISTY Cleaner",
+    "copyright": "Copyright \u00a9 2026 FRISTY",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "dist-electron/scanner.worker.js"
+    ],
+    "extraResources": [
+      {
+        "from": "build/icon.png",
+        "to": "assets/icon.png"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "FRISTY-Cleaner-${version}-win-${arch}.${ext}",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FRISTY Cleaner",
+      "uninstallDisplayName": "FRISTY Cleaner",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "FRISTY-Cleaner-Setup-${version}.${ext}"
+    },
+    "npmRebuild": false,
+    "afterPack": "scripts/after-pack.cjs",
+    "linux": {
+      "target": [
+        "dir"
+      ],
+      "icon": "build/icon.png"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://example.invalid/fristy-cleaner.git"
+  }
+}
