@@ -3,7 +3,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { executeClean, type CleanDeps } from '../electron/cleaner';
 import type { ResultItem } from '../src/shared/types';
-import { exists, makeTempDir, protection, runEngine, task, write } from './helpers';
+import { canSymlink, exists, makeTempDir, protection, runEngine, task, write } from './helpers';
 
 let dir: string;
 let bin: string;
@@ -47,7 +47,8 @@ describe('safe cleaning', () => {
     expect((await fsp.readdir(bin)).length).toBe(2);
   });
 
-  it('skips files that changed, disappeared or were replaced by links after the scan', async () => {
+  it('skips files that changed, disappeared or were replaced by links after the scan', async (ctx) => {
+    if (!(await canSymlink(dir))) return ctx.skip();
     await write(path.join(dir, 'changed.tmp'), 'v1', 5);
     await write(path.join(dir, 'gone.tmp'), 'x', 5);
     await write(path.join(dir, 'swapped.tmp'), 'x', 5);
@@ -69,7 +70,8 @@ describe('safe cleaning', () => {
     await fsp.rm(victim, { recursive: true, force: true });
   });
 
-  it('refuses paths redirected through a linked parent folder', async () => {
+  it('refuses paths redirected through a linked parent folder', async (ctx) => {
+    if (!(await canSymlink(dir))) return ctx.skip();
     await write(path.join(dir, 'work', 'x.tmp'), 'x', 5);
     const r = await runEngine(task('deep', [dir]));
     const victim = await makeTempDir('fristy-victim-');

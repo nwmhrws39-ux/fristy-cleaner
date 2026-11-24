@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import crypto from 'node:crypto';
 import nodePath from 'node:path';
+import { promisify } from 'node:util';
 import type { CategoryInfo, DeepDetectOptions, ResultItem, RiskLevel, ScanKind, ScanPhase } from '../../src/shared/types';
 import {
   classifyPath, isUnder, normalizeForCompare, pathLib, type ProtectionConfig, type ProtectionVerdict,
@@ -63,6 +64,9 @@ export interface EngineHooks {
   /** Awaited regularly; resolves immediately unless paused; throws CancelledError when cancelled. */
   checkpoint(): Promise<void>;
 }
+
+/** OS real path: expands 8.3 short names (e.g. C:\\Users\\RUNNER~1) so paths match the pre-deletion check. */
+const realpathNative = promisify(fs.realpath.native);
 
 export class CancelledError extends Error {
   constructor() {
@@ -233,6 +237,11 @@ export class ScanEngine {
       return null;
     }
     if (!st.isDirectory()) return null;
+    try {
+      root = await realpathNative(root);
+    } catch {
+      /* keep the given path */
+    }
     if (this.isExcluded(this.norm(root))) return null;
     const frame = this.makeFrame(root, null, this.lib.basename(root));
     return this.walkDir(frame, null, 0, visitor, root, st);

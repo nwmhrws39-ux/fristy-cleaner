@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ScanEngine, CancelledError } from '../electron/scanner/engine';
 import { buildQuickTargets } from '../electron/scanner/targets';
-import { makeTempDir, protection, runEngine, task, write } from './helpers';
+import { canSymlink, makeTempDir, protection, runEngine, task, write } from './helpers';
 
 let dir: string;
 beforeEach(async () => {
@@ -73,7 +73,8 @@ describe('deep scan', () => {
     expect(r.state.filesScanned).toBe(9);
   });
 
-  it('does not follow symbolic links by default', async () => {
+  it('does not follow symbolic links by default', async (ctx) => {
+    if (!(await canSymlink(dir))) return ctx.skip();
     const outside = await makeTempDir('fristy-outside-');
     try {
       await write(path.join(outside, 'huge.bin'), Buffer.alloc(4096));
